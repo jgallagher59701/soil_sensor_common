@@ -15,12 +15,16 @@
 #define RH_RF95_MAX_MESSAGE_LEN 251
 #endif
 
+#undef SUPPORT_JOIN
+
 /** 
  * Message types the leaf node may send to the main node.
  */
 enum MessageType {
+#ifdef SUPPORT_JOIN
     join_request = 1,
     join_response = 2,
+#endif
     time_request = 3,
     time_response = 4,
     // error = 5,
@@ -30,9 +34,12 @@ enum MessageType {
     text = 11,
 
     // The original data packet
-    data_packet = 12
+    data_packet = 12,
+
+    error = 255  // Added. jhrg 4/26/25
 };
 
+#ifdef SUPPORT_JOIN
 /// Size of the join request in bytes
 #define JOIN_REQUEST_SIZE sizeof(join_request_t)
 
@@ -68,6 +75,7 @@ struct join_response_t {
     uint8_t leaf_node;  // TO
     uint32_t time;
 };
+#endif // SUPPORT_JOIN
 
 /// Size of the time request in bytes
 #define TIME_REQUEST_SIZE sizeof(time_request_t)
@@ -104,6 +112,7 @@ struct text_t {
 MessageType get_message_type(void *message);
 char *get_message_type_string(MessageType type);
 
+#ifdef SUPPORT_JOIN
 void build_join_request(join_request_t *jr, uint64_t dev_eui);
 bool parse_join_request(const join_request_t *data, uint64_t *dev_eui);
 char *join_request_to_string(const join_request_t *jr, bool pretty = false);
@@ -111,6 +120,7 @@ char *join_request_to_string(const join_request_t *jr, bool pretty = false);
 char *join_response_to_string(const join_response_t *jr, bool pretty = false);
 bool parse_join_response(const join_response_t *data, uint8_t *node, uint32_t *time);
 void build_join_response(join_response_t *jr, uint8_t node, uint32_t time);
+#endif
 
 char *time_request_to_string(const time_request_t *tr, bool pretty /*false*/);
 bool parse_time_request(const time_request_t *data, uint8_t *node);

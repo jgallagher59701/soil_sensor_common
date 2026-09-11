@@ -17,6 +17,9 @@
  * @return the Message Type.
  */
 MessageType get_message_type(void *message) {
+    if (message == nullptr)
+        return error;
+
     MessageType type;
     memcpy(&type, message, sizeof(MessageType));
     return type;
@@ -27,10 +30,12 @@ MessageType get_message_type(void *message) {
  */
 char *get_message_type_string(MessageType type) {
     switch (type) {
+#ifdef SUPPORT_JOIN
         case join_request:
             return (char*)"join request";
         case join_response:
             return (char*)"join response";
+#endif
         case time_request:
             return (char*)"time request";
         case time_response:
@@ -39,12 +44,32 @@ char *get_message_type_string(MessageType type) {
             return (char*)"data message";
         case text:
             return (char*)"text";
+        case error:
+            return (char *)"error";
 
         default:
             return (char*)"unknown";
     }
 }
 
+bool is_valid_message_type(MessageType type) {
+    switch (type) {
+#ifdef SUPPORT_JOIN
+        case join_request:
+        case join_response:
+#endif
+        case time_request:
+        case time_response:
+        case data_message:
+        case text:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+#ifdef SUPPORT_JOIN
 /** 
  * @name Join Request 
  * @note Instead of using this, write a python program to handle initial configuration.
@@ -150,6 +175,7 @@ char *join_response_to_string(const join_response_t *jr, bool pretty /*false*/) 
     return decoded_string;
 }
 ///@}
+#endif  // SUPPORT_JOIN
 
 /** @name Time Request */
 ///@{

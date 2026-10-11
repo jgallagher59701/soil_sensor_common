@@ -148,7 +148,7 @@ void build_join_response(join_response_t *jr, uint8_t node, uint32_t time) {
 
 
 bool parse_join_response(const join_response_t *data, uint8_t *node, uint32_t *time) {
-    if (data->type != join_request)
+    if (data->type != join_response)
         return false;
 
     if (node)

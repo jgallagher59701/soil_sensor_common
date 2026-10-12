@@ -15,9 +15,13 @@
 #define RH_RF95_MAX_MESSAGE_LEN 251
 #endif
 
-#undef SUPPORT_JOIN
+// SUPPORT_JOIN is off unless a build defines it (e.g. -D SUPPORT_JOIN). This
+// used to be an unconditional #undef here, which defeated that switch by
+// wiping out any externally-defined value before the #ifdefs below ever saw
+// it (BUG-002 follow-up, HAST_leaf_node) - removed, not replaced, since
+// "undefined" is already the correct default.
 
-/** 
+/**
  * Message types the leaf node may send to the main node.
  */
 enum MessageType {
